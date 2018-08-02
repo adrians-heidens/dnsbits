@@ -1,0 +1,1 @@
+﻿DNS client library for querying domain names.
