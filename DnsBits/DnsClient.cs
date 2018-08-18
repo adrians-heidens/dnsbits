@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Net;
 using System.Net.Sockets;
+using System.Text;
 
 namespace DnsBits
 {
@@ -17,11 +18,20 @@ namespace DnsBits
                 throw new Exception("Got unexpected IP addresses");
             }
 
-            IPEndPoint endPoint = new IPEndPoint(ipAddresses[0], 53);
+            IPEndPoint endPoint = new IPEndPoint(ipAddresses[0], 8080);
 
             socket.Connect(endPoint);
 
-            socket.Send(new byte[] { 0x01, 0x02 });
+            var input = Encoding.UTF8.GetBytes("hello world");
+
+            Console.WriteLine($"Sending: '{ Encoding.UTF8.GetString(input) }'");
+            socket.Send(input);
+
+            Console.WriteLine("Receiving...");
+            var output = new byte[32];
+            var c = socket.Receive(output);
+
+            Console.WriteLine($"Received ({c}b): '{ Encoding.UTF8.GetString(output, 0, c) }'");
 
             socket.Close();
         }

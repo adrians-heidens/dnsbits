@@ -3,9 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27703.2042
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DnsBits", "DnsBits\DnsBits.csproj", "{69C2B418-C95E-4BEE-9AFA-0E1601ABA960}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DnsBits", "DnsBits\DnsBits.csproj", "{69C2B418-C95E-4BEE-9AFA-0E1601ABA960}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "Tests\Tests.csproj", "{BEA21095-8FA2-4D23-8866-F326172A00B6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tests", "Tests\Tests.csproj", "{BEA21095-8FA2-4D23-8866-F326172A00B6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClientConsoleApp", "ClientConsoleApp\ClientConsoleApp.csproj", "{F0D30C98-D9F7-4907-8C1D-9779DC1CEB15}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{BEA21095-8FA2-4D23-8866-F326172A00B6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BEA21095-8FA2-4D23-8866-F326172A00B6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BEA21095-8FA2-4D23-8866-F326172A00B6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F0D30C98-D9F7-4907-8C1D-9779DC1CEB15}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F0D30C98-D9F7-4907-8C1D-9779DC1CEB15}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F0D30C98-D9F7-4907-8C1D-9779DC1CEB15}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F0D30C98-D9F7-4907-8C1D-9779DC1CEB15}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

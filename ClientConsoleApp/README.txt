@@ -1,0 +1,1 @@
+﻿Console application for querying DNS server.
