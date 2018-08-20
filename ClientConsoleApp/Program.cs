@@ -7,14 +7,38 @@ namespace ClientConsoleApp
     {
         static void Main(string[] args)
         {
-            string name = "ns1.test";
-            Console.WriteLine($"Querying name '{ name }'");
+            if (args.Length != 3)
+            {
+                PrintUsage();
+                Environment.Exit(2);
+            }
 
-            var client = new DnsClient();
-            client.Query(name);
+            string serverHost = "";
+            int serverPort = 53;
+            string queryName = "";
+
+            try
+            {
+                serverHost = args[0];
+                serverPort = Int32.Parse(args[1]);
+                queryName = args[2];
+            } catch (FormatException)
+            {
+                PrintUsage();
+                Environment.Exit(2);
+            }
+
+            Console.WriteLine($"Query: '{queryName}' on server ('{serverHost}', {serverPort})");
+            DnsClient client = new DnsClient();
+
 
             Console.WriteLine("End.");
             Console.ReadKey();
+        }
+
+        private static void PrintUsage()
+        {
+            Console.WriteLine("Usage: prog server port name");
         }
     }
 }

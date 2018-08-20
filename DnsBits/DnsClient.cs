@@ -7,18 +7,30 @@ namespace DnsBits
 {
     public class DnsClient
     {
+        /// <summary>
+        /// Resolve and return IPv4 address from hostname.
+        /// </summary>
+        /// <param name="hostName">Hostname to resolve</param>
+        /// <returns>Ipv4 address</returns>
+        private IPAddress GetIpv4Address(string hostName)
+        {
+            IPAddress[] ipAddresses = Dns.GetHostAddresses(hostName);
+            foreach (var ipAddress in ipAddresses)
+            {
+                if (ipAddress.AddressFamily == AddressFamily.InterNetwork)
+                {
+                    return ipAddress;
+                }
+            }
+            throw new Exception($"Could not resolve hostname '{hostName}' to Ipv4 address");
+        }
 
-        public void Query(string domainName)
+        public void Query(string serverHost, int serverPort, string name)
         {
             Socket socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
 
-            IPAddress[] ipAddresses = Dns.GetHostAddresses("192.168.1.202");
-            if (ipAddresses.Length != 1)
-            {
-                throw new Exception("Got unexpected IP addresses");
-            }
-
-            IPEndPoint endPoint = new IPEndPoint(ipAddresses[0], 8080);
+            var ipv4Address = GetIpv4Address(serverHost);
+            IPEndPoint endPoint = new IPEndPoint(ipv4Address, serverPort);
 
             socket.Connect(endPoint);
 
