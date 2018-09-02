@@ -47,5 +47,14 @@ namespace Tests
             writer.AddBits(5, 0b10100);
             writer.AddUint(123);
         }
+
+        [TestMethod]
+        [ExpectedException(typeof(DnsBitsException))]
+        public void UnfinishedValueTest()
+        {
+            ByteWriter writer = new ByteWriter();
+            writer.AddBits(5, 0b10100);
+            writer.GetValue();
+        }
     }
 }

@@ -134,6 +134,10 @@ namespace DnsBits
         /// </summary>
         public byte[] GetValue()
         {
+            if (IsInBitmode)
+            {
+                throw new DnsBitsException("Stream is not aligned with byte boundary.");
+            }
             return memoryStream.ToArray();
         }
 
