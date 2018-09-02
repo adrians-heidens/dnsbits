@@ -51,5 +51,17 @@ namespace Tests
             var reader = new ByteReader(new byte[] { 0x01, 0x02 });
             reader.GetUint();
         }
+
+        [TestMethod]
+        public void IsFinishedTest()
+        {
+            var reader = new ByteReader(new byte[] { 0x01, 0x02 });
+            Assert.IsFalse(reader.IsFinished);
+
+            reader.GetByte();
+            reader.GetByte();
+
+            Assert.IsTrue(reader.IsFinished);
+        }
     }
 }

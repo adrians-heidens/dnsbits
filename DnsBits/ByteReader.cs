@@ -29,6 +29,14 @@ namespace DnsBits
         }
 
         /// <summary>
+        /// Byte stream has been consumed.
+        /// </summary>
+        public bool IsFinished
+        {
+            get { return memoryStream.Capacity == memoryStream.Position; }
+        }
+
+        /// <summary>
         /// Get ushort value.
         /// </summary>
         public ushort GetUshort()
