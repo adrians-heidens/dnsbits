@@ -16,11 +16,11 @@ namespace DnsBits
         {
             if (index < 0 || index > 7)
             {
-                throw new ArgumentOutOfRangeException("index", value, "Must be in range [0, 7].");
+                throw new ArgumentOutOfRangeException("index", index, "Must be in range [0, 7].");
             }
             if (count < 0 || count > 8 - index)
             {
-                throw new ArgumentOutOfRangeException("count", value, "Must be in range [0, 8 - index].");
+                throw new ArgumentOutOfRangeException("count", count, "Must be in range [0, 8 - index].");
             }
 
             int ones = (1 << count) - 1;
@@ -43,16 +43,16 @@ namespace DnsBits
         {
             if (index < 0 || index > 7)
             {
-                throw new ArgumentOutOfRangeException("index", value, "Must be in range [0, 7].");
+                throw new ArgumentOutOfRangeException("index", index, "Must be in range [0, 7].");
             }
             if (count < 0 || count > 8 - index)
             {
-                throw new ArgumentOutOfRangeException("count", value, "Must be in range [0, 8 - index].");
+                throw new ArgumentOutOfRangeException("count", count, "Must be in range [0, 8 - index].");
             }
             var maxSource = (1 << count) - 1;
             if (source > maxSource)
             {
-                throw new ArgumentOutOfRangeException("source", value, "Source too big for bit count.");
+                throw new ArgumentOutOfRangeException("source", source, "Source too big for bit count.");
             }
 
             int iv = 7 - index;
