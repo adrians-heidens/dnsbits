@@ -8,7 +8,7 @@ namespace Tests
     public class ByteReaderTest
     {
         [TestMethod]
-        public void TestNormalOperation()
+        public void NormalOperationTest()
         {
             byte[] bytes = File.ReadAllBytes(Path.Combine("Files", "structdata.dat"));
             var reader = new ByteReader(bytes);
