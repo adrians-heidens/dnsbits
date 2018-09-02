@@ -30,7 +30,7 @@ namespace ClientConsoleApp
 
             Console.WriteLine($"Query: '{queryName}' on server ('{serverHost}', {serverPort})");
             DnsClient client = new DnsClient();
-
+            client.Query(serverHost, serverPort, queryName);
 
             Console.WriteLine("End.");
             Console.ReadKey();

@@ -34,13 +34,13 @@ namespace DnsBits
 
             socket.Connect(endPoint);
 
-            var input = Encoding.UTF8.GetBytes("hello world");
+            var input = DnsUtils.CreateQuestionARec();
 
-            Console.WriteLine($"Sending: '{ Encoding.UTF8.GetString(input) }'");
+            Console.WriteLine($"Sending: { input.Length }b data");
             socket.Send(input);
 
             Console.WriteLine("Receiving...");
-            var output = new byte[32];
+            var output = new byte[8192];
             var c = socket.Receive(output);
 
             Console.WriteLine($"Received ({c}b): '{ Encoding.UTF8.GetString(output, 0, c) }'");
