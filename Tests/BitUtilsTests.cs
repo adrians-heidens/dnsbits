@@ -1,5 +1,6 @@
 ﻿using DnsBits;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
 
 namespace Tests
 {
@@ -30,6 +31,15 @@ namespace Tests
             Assert.AreEqual(0b10010010, BitUtils.SetBits(0b10010001, 6, 2, 0b10));
             Assert.AreEqual(0b11101100, BitUtils.SetBits(0b10010001, 0, 8, 0b11101100));
             Assert.AreEqual(0b11111111, BitUtils.SetBits(0b10010001, 0, 8, 0b11111111));
+            Assert.AreEqual(0b10111001, BitUtils.SetBits(0b10010001, 2, 3, 0b111));
+            Assert.AreEqual(0b10000001, BitUtils.SetBits(0b10010001, 2, 3, 0b000));
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentOutOfRangeException))]
+        public void TestSourceTooBig()
+        {
+            Assert.AreEqual(0b10110001, BitUtils.SetBits(0b10010001, 2, 3, 0b1110));
         }
     }
 }
