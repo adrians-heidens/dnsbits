@@ -17,12 +17,22 @@ namespace DnsBits
         {
             memoryStream = new MemoryStream();
         }
-        
+
+        private bool IsInBitmode
+        {
+            get { return bitsOffset != 0; }
+        }
+
         /// <summary>
         /// Add ushort value.
         /// </summary>
         public void AddUshort(ushort value)
         {
+            if (IsInBitmode)
+            {
+                throw new DnsBitsException("Writing accross byte boundaries.");
+            }
+
             byte[] bytes = BitConverter.GetBytes(value);
             if (BitConverter.IsLittleEndian)
             {
@@ -36,6 +46,11 @@ namespace DnsBits
         /// </summary>
         public void AddUint(uint value)
         {
+            if (IsInBitmode)
+            {
+                throw new DnsBitsException("Writing accross byte boundaries.");
+            }
+
             byte[] bytes = BitConverter.GetBytes(value);
             if (BitConverter.IsLittleEndian)
             {
@@ -49,6 +64,11 @@ namespace DnsBits
         /// </summary>
         public void AddByte(byte value)
         {
+            if (IsInBitmode)
+            {
+                throw new DnsBitsException("Writing accross byte boundaries.");
+            }
+
             memoryStream.WriteByte(value);
         }
 
@@ -57,6 +77,11 @@ namespace DnsBits
         /// </summary>
         public void AddString(string value)
         {
+            if (IsInBitmode)
+            {
+                throw new DnsBitsException("Writing accross byte boundaries.");
+            }
+
             memoryStream.Write(Encoding.UTF8.GetBytes(value));
         }
 
@@ -66,6 +91,11 @@ namespace DnsBits
         /// <param name="value"></param>
         public void AddBytes(byte[] value)
         {
+            if (IsInBitmode)
+            {
+                throw new DnsBitsException("Writing accross byte boundaries.");
+            }
+
             memoryStream.Write(value);
         }
 
@@ -76,7 +106,14 @@ namespace DnsBits
         /// <param name="value">Actual bits to add.</param>
         public void AddBits(int count, byte value)
         {
-            // TODO: assertions.
+            if (count < 0 || count > 7)
+            {
+                throw new ArgumentOutOfRangeException("count", count, "Value must be in range [0, 7]");
+            }
+            if (bitsOffset + count > 8)
+            {
+                throw new DnsBitsException("Writing accross byte boundaries.");
+            }
 
             if (bitsOffset == 0)
             {

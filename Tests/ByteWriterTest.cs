@@ -9,7 +9,7 @@ namespace Tests
     public class ByteWriterTest
     {
         [TestMethod]
-        public void Test()
+        public void NormalOperationTest()
         {
             ByteWriter builder = new ByteWriter();
 
@@ -28,6 +28,24 @@ namespace Tests
             byte[] actual = builder.GetValue();
 
             Assert.AreEqual(BitConverter.ToString(expected), BitConverter.ToString(actual));
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(DnsBitsException))]
+        public void BoundaryBitsTest()
+        {
+            ByteWriter writer = new ByteWriter();
+            writer.AddBits(5, 0b10100);
+            writer.AddBits(4, 0b1100);
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(DnsBitsException))]
+        public void BoundaryTest()
+        {
+            ByteWriter writer = new ByteWriter();
+            writer.AddBits(5, 0b10100);
+            writer.AddUint(123);
         }
     }
 }
