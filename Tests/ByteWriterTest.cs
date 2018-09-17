@@ -11,21 +11,21 @@ namespace Tests
         [TestMethod]
         public void NormalOperationTest()
         {
-            ByteWriter builder = new ByteWriter();
+            ByteWriter writer = new ByteWriter();
 
-            builder.AddUshort(35000);
-            builder.AddByte(230);
-            builder.AddString("spam");
-            builder.AddUint(4211001100);
+            writer.AddUshort(35000);
+            writer.AddByte(230);
+            writer.AddString("spam");
+            writer.AddUint(4211001100);
 
-            builder.AddBits(1, 1);
-            builder.AddBits(4, 2);
-            builder.AddBits(3, 1);
+            writer.AddBits(1, 1);
+            writer.AddBits(4, 2);
+            writer.AddBits(3, 1);
 
-            builder.AddByte(10);
+            writer.AddByte(10);
             
             byte[] expected = File.ReadAllBytes(Path.Combine("Files", "structdata.dat"));
-            byte[] actual = builder.GetValue();
+            byte[] actual = writer.GetValue();
 
             Assert.AreEqual(BitConverter.ToString(expected), BitConverter.ToString(actual));
         }
