@@ -40,10 +40,12 @@ namespace DnsBits
             socket.Send(input);
 
             Console.WriteLine("Receiving...");
-            var output = new byte[8192];
+            var output = new byte[512];
             var c = socket.Receive(output);
 
-            Console.WriteLine($"Received ({c}b): '{ Encoding.UTF8.GetString(output, 0, c) }'");
+            Console.WriteLine($"Received {c}bytes");
+
+            DnsUtils.ReadDnsAnswerMessage(output);
 
             socket.Close();
         }
