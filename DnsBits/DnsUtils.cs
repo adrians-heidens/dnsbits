@@ -44,6 +44,40 @@ namespace DnsBits
         }
 
         /// <summary>
+        /// Read domain name from ByteReader.
+        /// </summary>
+        private static string ReadName(ByteReader byteReader)
+        {
+            var labels = new List<string>();
+
+            var compressed = byteReader.GetBits(2);
+            var length = byteReader.GetBits(6);
+
+            while (compressed == 0 && length != 0)
+            {
+                labels.Add(byteReader.GetString(length));
+                compressed = byteReader.GetBits(2);
+                length = byteReader.GetBits(6);
+            }
+
+            if (compressed == 3)
+            {
+                var offset = (length << 6) | byteReader.GetByte();
+                var position = byteReader.GetPosition();
+                byteReader.SetPosition(offset);
+                labels.Add(ReadName(byteReader));
+                byteReader.SetPosition(position);
+            }
+
+            if (compressed != 0 && compressed != 3)
+            {
+                throw new Exception("Unexpected name compression indicator.");
+            }
+
+            return string.Join(".", labels);
+        }
+
+        /// <summary>
         /// Read bytes as DNS answer message and print it.
         /// </summary>
         public static void ReadDnsAnswerMessage(byte[] message)
@@ -69,25 +103,21 @@ namespace DnsBits
             Console.WriteLine($">>> ARCOUNT: { byteReader.GetUshort() }");
 
             // Question.
-            var labels = new List<string>();
-            byte compression = byteReader.GetBits(2);
-            Console.WriteLine($"+++ { compression }");
-            byte len = byteReader.GetBits(6);
-            while (len != 0)
-            {
-                labels.Add(byteReader.GetString(len));
-                len = byteReader.GetByte();
-            }
-            Console.WriteLine($">>> QNAME: { string.Join(".", labels) }");
+            var qname = ReadName(byteReader);
+            Console.WriteLine($">>> QNAME: { qname }");
             Console.WriteLine($">>> QTYPE: { byteReader.GetUshort() }");
             Console.WriteLine($">>> QCLASS: { byteReader.GetUshort() }");
 
             // Answer.
-            labels = new List<string>();
-            compression = byteReader.GetBits(2);
-            Console.WriteLine($"+++ { compression }");
-            // TODO.
-
+            var name = ReadName(byteReader);
+            Console.WriteLine($">>> NAME: { name }");
+            Console.WriteLine($">>> TYPE: { byteReader.GetUshort() }");
+            Console.WriteLine($">>> CLASS: { byteReader.GetUshort() }");
+            Console.WriteLine($">>> TTL: { byteReader.GetUint() }");
+            ushort rdlen = byteReader.GetUshort();
+            Console.WriteLine($">>> RDLENGTH: { rdlen }");
+            Console.WriteLine($">>> RDATA: { BitConverter.ToString(byteReader.GetBytes(rdlen)) }");
+            
             // Authority.
 
             // Additional.

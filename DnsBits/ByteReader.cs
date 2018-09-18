@@ -174,5 +174,21 @@ namespace DnsBits
 
             return value;
         }
+
+        /// <summary>
+        /// Get position of current byte to read.
+        /// </summary>
+        public long GetPosition()
+        {
+            return memoryStream.Position;
+        }
+
+        /// <summary>
+        /// Set position on which byte to read.
+        /// </summary>
+        public void SetPosition(long position)
+        {
+            memoryStream.Position = position;
+        }
     }
 }
