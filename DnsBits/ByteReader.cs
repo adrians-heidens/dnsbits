@@ -33,7 +33,9 @@ namespace DnsBits
         /// </summary>
         public bool IsFinished
         {
-            get { return memoryStream.Capacity == memoryStream.Position; }
+            get {
+                return memoryStream.Capacity == memoryStream.Position;
+            }
         }
 
         /// <summary>

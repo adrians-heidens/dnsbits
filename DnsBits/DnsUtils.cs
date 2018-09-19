@@ -8,11 +8,13 @@ namespace DnsBits
         /// <summary>
         /// Create DNS question message for A records.
         /// </summary>
-        public static byte[] CreateQuestionARec()
+        public static byte[] CreateQuestionARec(string name)
         {
             var byteWriter = new ByteWriter();
 
-            byteWriter.AddUshort(12345);
+            Random random = new Random();
+            ushort id = (ushort)random.Next(ushort.MinValue, ushort.MaxValue);
+            byteWriter.AddUshort(id);
 
             // Header.
             byteWriter.AddBits(1, 0);
@@ -31,10 +33,12 @@ namespace DnsBits
             byteWriter.AddUshort(0);
 
             // Question.
-            byteWriter.AddByte(3);
-            byteWriter.AddString("ns1");
-            byteWriter.AddByte(4);
-            byteWriter.AddString("test");
+            var labels = name.Split(".");
+            foreach (var label in labels)
+            {
+                byteWriter.AddByte((byte) label.Length);
+                byteWriter.AddString(label);
+            }
             byteWriter.AddByte(0);
 
             byteWriter.AddUshort(1);
@@ -97,30 +101,71 @@ namespace DnsBits
             Console.WriteLine($">>> Z: { byteReader.GetBits(3) }");
             Console.WriteLine($">>> RCODE: { byteReader.GetBits(4) }");
 
-            Console.WriteLine($">>> QDCOUNT: { byteReader.GetUshort() }");
-            Console.WriteLine($">>> ANCOUNT: { byteReader.GetUshort() }");
-            Console.WriteLine($">>> NSCOUNT: { byteReader.GetUshort() }");
-            Console.WriteLine($">>> ARCOUNT: { byteReader.GetUshort() }");
+            var qdcount = byteReader.GetUshort();
+            Console.WriteLine($">>> QDCOUNT: { qdcount }");
+            var ancount = byteReader.GetUshort();
+            Console.WriteLine($">>> ANCOUNT: { ancount }");
+            var nscount = byteReader.GetUshort();
+            Console.WriteLine($">>> NSCOUNT: { nscount }");
+            var arcount = byteReader.GetUshort();
+            Console.WriteLine($">>> ARCOUNT: { arcount }");
 
             // Question.
-            var qname = ReadName(byteReader);
-            Console.WriteLine($">>> QNAME: { qname }");
-            Console.WriteLine($">>> QTYPE: { byteReader.GetUshort() }");
-            Console.WriteLine($">>> QCLASS: { byteReader.GetUshort() }");
+            Console.WriteLine($"+++ Question ({ qdcount }):");
+            for (int i = 0; i < qdcount; i++)
+            {
+                var qname = ReadName(byteReader);
+                Console.WriteLine($">>> QNAME: { qname }");
+                Console.WriteLine($">>> QTYPE: { byteReader.GetUshort() }");
+                Console.WriteLine($">>> QCLASS: { byteReader.GetUshort() }");
+            }
 
             // Answer.
-            var name = ReadName(byteReader);
-            Console.WriteLine($">>> NAME: { name }");
-            Console.WriteLine($">>> TYPE: { byteReader.GetUshort() }");
-            Console.WriteLine($">>> CLASS: { byteReader.GetUshort() }");
-            Console.WriteLine($">>> TTL: { byteReader.GetUint() }");
-            ushort rdlen = byteReader.GetUshort();
-            Console.WriteLine($">>> RDLENGTH: { rdlen }");
-            Console.WriteLine($">>> RDATA: { BitConverter.ToString(byteReader.GetBytes(rdlen)) }");
-            
+            Console.WriteLine($"+++ Answer ({ ancount }):");
+            for (int i = 0; i < ancount; i++)
+            {
+                var name = ReadName(byteReader);
+                Console.WriteLine($">>> NAME: { name }");
+                Console.WriteLine($">>> TYPE: { byteReader.GetUshort() }");
+                Console.WriteLine($">>> CLASS: { byteReader.GetUshort() }");
+                Console.WriteLine($">>> TTL: { byteReader.GetUint() }");
+                ushort rdlen = byteReader.GetUshort();
+                Console.WriteLine($">>> RDLENGTH: { rdlen }");
+                Console.WriteLine($">>> RDATA: { BitConverter.ToString(byteReader.GetBytes(rdlen)) }");
+            }
+
             // Authority.
+            Console.WriteLine($"+++ Authority ({ nscount }):");
+            for (int i = 0; i < nscount; i++)
+            {
+                var name = ReadName(byteReader);
+                Console.WriteLine($">>> NAME: { name }");
+                Console.WriteLine($">>> TYPE: { byteReader.GetUshort() }");
+                Console.WriteLine($">>> CLASS: { byteReader.GetUshort() }");
+                Console.WriteLine($">>> TTL: { byteReader.GetUint() }");
+                ushort rdlen = byteReader.GetUshort();
+                Console.WriteLine($">>> RDLENGTH: { rdlen }");
+                Console.WriteLine($">>> RDATA: { BitConverter.ToString(byteReader.GetBytes(rdlen)) }");
+            }
 
             // Additional.
+            Console.WriteLine($"+++ Additional ({ arcount }):");
+            for (int i = 0; i < arcount; i++)
+            {
+                var name = ReadName(byteReader);
+                Console.WriteLine($">>> NAME: { name }");
+                Console.WriteLine($">>> TYPE: { byteReader.GetUshort() }");
+                Console.WriteLine($">>> CLASS: { byteReader.GetUshort() }");
+                Console.WriteLine($">>> TTL: { byteReader.GetUint() }");
+                ushort rdlen = byteReader.GetUshort();
+                Console.WriteLine($">>> RDLENGTH: { rdlen }");
+                Console.WriteLine($">>> RDATA: { BitConverter.ToString(byteReader.GetBytes(rdlen)) }");
+            }
+
+            if (! byteReader.IsFinished)
+            {
+                throw new Exception("Dns data not exhausted.");
+            }
         }
     }
 }

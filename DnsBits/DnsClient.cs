@@ -34,9 +34,9 @@ namespace DnsBits
 
             socket.Connect(endPoint);
 
-            var input = DnsUtils.CreateQuestionARec();
+            var input = DnsUtils.CreateQuestionARec(name);
 
-            Console.WriteLine($"Sending: { input.Length }b data");
+            Console.WriteLine($"Sending: { input.Length }bytes data");
             socket.Send(input);
 
             Console.WriteLine("Receiving...");
@@ -45,7 +45,9 @@ namespace DnsBits
 
             Console.WriteLine($"Received {c}bytes");
 
-            DnsUtils.ReadDnsAnswerMessage(output);
+            var dnsPacket = new byte[c];
+            Array.Copy(output, dnsPacket, c);
+            DnsUtils.ReadDnsAnswerMessage(dnsPacket);
 
             socket.Close();
         }
