@@ -80,31 +80,28 @@ namespace DnsBits
         {
             var byteReader = new ByteReader(message);
 
-            // Header.
-            Console.WriteLine($">>> ID: { byteReader.GetUshort() }");
+            var header = DnsHeader.FromByteReader(byteReader);
 
-            Console.WriteLine($">>> QR: { byteReader.GetBits(1) }");
-            Console.WriteLine($">>> OPCODE: { byteReader.GetBits(4) }");
-            Console.WriteLine($">>> AA: { byteReader.GetBits(1) }");
-            Console.WriteLine($">>> TC: { byteReader.GetBits(1) }");
-            Console.WriteLine($">>> RD: { byteReader.GetBits(1) }");
+            Console.WriteLine($">>> ID: { header.ID }");
 
-            Console.WriteLine($">>> RA: { byteReader.GetBits(1) }");
-            Console.WriteLine($">>> Z: { byteReader.GetBits(3) }");
-            Console.WriteLine($">>> RCODE: { byteReader.GetBits(4) }");
+            Console.WriteLine($">>> QR: { header.QR }");
+            Console.WriteLine($">>> OPCODE: { header.OPCODE }");
+            Console.WriteLine($">>> AA: { header.AA }");
+            Console.WriteLine($">>> TC: { header.TC }");
+            Console.WriteLine($">>> RD: { header.RD }");
 
-            var qdcount = byteReader.GetUshort();
-            Console.WriteLine($">>> QDCOUNT: { qdcount }");
-            var ancount = byteReader.GetUshort();
-            Console.WriteLine($">>> ANCOUNT: { ancount }");
-            var nscount = byteReader.GetUshort();
-            Console.WriteLine($">>> NSCOUNT: { nscount }");
-            var arcount = byteReader.GetUshort();
-            Console.WriteLine($">>> ARCOUNT: { arcount }");
+            Console.WriteLine($">>> RA: { header.RA }");
+            Console.WriteLine($">>> Z: { header.Z }");
+            Console.WriteLine($">>> RCODE: { header.RCODE }");
+
+            Console.WriteLine($">>> QDCOUNT: { header.QDCOUNT }");
+            Console.WriteLine($">>> ANCOUNT: { header.ANCOUNT }");
+            Console.WriteLine($">>> NSCOUNT: { header.NSCOUNT }");
+            Console.WriteLine($">>> ARCOUNT: { header.ARCOUNT }");
 
             // Question.
-            Console.WriteLine($"+++ Question ({ qdcount }):");
-            for (int i = 0; i < qdcount; i++)
+            Console.WriteLine($"+++ Question ({ header.QDCOUNT }):");
+            for (int i = 0; i < header.QDCOUNT; i++)
             {
                 var qname = ReadName(byteReader);
                 Console.WriteLine($">>> QNAME: { qname }");
@@ -113,8 +110,8 @@ namespace DnsBits
             }
 
             // Answer.
-            Console.WriteLine($"+++ Answer ({ ancount }):");
-            for (int i = 0; i < ancount; i++)
+            Console.WriteLine($"+++ Answer ({ header.ANCOUNT }):");
+            for (int i = 0; i < header.ANCOUNT; i++)
             {
                 var name = ReadName(byteReader);
                 Console.WriteLine($">>> NAME: { name }");
@@ -127,8 +124,8 @@ namespace DnsBits
             }
 
             // Authority.
-            Console.WriteLine($"+++ Authority ({ nscount }):");
-            for (int i = 0; i < nscount; i++)
+            Console.WriteLine($"+++ Authority ({ header.NSCOUNT }):");
+            for (int i = 0; i < header.NSCOUNT; i++)
             {
                 var name = ReadName(byteReader);
                 Console.WriteLine($">>> NAME: { name }");
@@ -141,8 +138,8 @@ namespace DnsBits
             }
 
             // Additional.
-            Console.WriteLine($"+++ Additional ({ arcount }):");
-            for (int i = 0; i < arcount; i++)
+            Console.WriteLine($"+++ Additional ({ header.ARCOUNT }):");
+            for (int i = 0; i < header.ARCOUNT; i++)
             {
                 var name = ReadName(byteReader);
                 Console.WriteLine($">>> NAME: { name }");

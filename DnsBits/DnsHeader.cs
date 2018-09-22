@@ -120,6 +120,14 @@
         public static DnsHeader FromBytes(byte[] bytes)
         {
             var byteReader = new ByteReader(bytes);
+            return FromByteReader(byteReader);
+        }
+
+        /// <summary>
+        /// Create new header from byte reader.
+        /// </summary>
+        public static DnsHeader FromByteReader(ByteReader byteReader)
+        {
             var header = new DnsHeader();
 
             header.ID = byteReader.GetUshort();
