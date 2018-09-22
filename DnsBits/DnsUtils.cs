@@ -10,26 +10,19 @@ namespace DnsBits
         /// </summary>
         public static byte[] CreateQuestionARec(string name)
         {
+            var byteWriter = new ByteWriter();
+
             var header = new DnsHeader();
-            
             header.ID = GetId();
             header.QDCOUNT = 1;
-
-            var byteWriter = new ByteWriter();
             byteWriter.AddBytes(header.ToBytes());
 
-            // Question.
-            var labels = name.Split(".");
-            foreach (var label in labels)
-            {
-                byteWriter.AddByte((byte) label.Length);
-                byteWriter.AddString(label);
-            }
-            byteWriter.AddByte(0);
+            var question = new DnsQuestion();
+            question.QNAME = name;
+            question.QTYPE = 1;
+            question.QCLASS = 1;
+            byteWriter.AddBytes(question.ToBytes());
 
-            byteWriter.AddUshort(1);
-            byteWriter.AddUshort(1);
-            
             return byteWriter.GetValue();
         }
 
@@ -42,7 +35,7 @@ namespace DnsBits
         /// <summary>
         /// Read domain name from ByteReader.
         /// </summary>
-        private static string ReadName(ByteReader byteReader)
+        public static string ReadName(ByteReader byteReader)
         {
             var labels = new List<string>();
 
@@ -103,10 +96,10 @@ namespace DnsBits
             Console.WriteLine($"+++ Question ({ header.QDCOUNT }):");
             for (int i = 0; i < header.QDCOUNT; i++)
             {
-                var qname = ReadName(byteReader);
-                Console.WriteLine($">>> QNAME: { qname }");
-                Console.WriteLine($">>> QTYPE: { byteReader.GetUshort() }");
-                Console.WriteLine($">>> QCLASS: { byteReader.GetUshort() }");
+                var question = DnsQuestion.FromByteReader(byteReader);
+                Console.WriteLine($">>> QNAME: { question.QNAME }");
+                Console.WriteLine($">>> QTYPE: { question.QTYPE }");
+                Console.WriteLine($">>> QCLASS: { question.QCLASS }");
             }
 
             // Answer.
