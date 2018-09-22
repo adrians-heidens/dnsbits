@@ -10,27 +10,13 @@ namespace DnsBits
         /// </summary>
         public static byte[] CreateQuestionARec(string name)
         {
+            var header = new DnsHeader();
+            
+            header.ID = GetId();
+            header.QDCOUNT = 1;
+
             var byteWriter = new ByteWriter();
-
-            Random random = new Random();
-            ushort id = (ushort)random.Next(ushort.MinValue, ushort.MaxValue);
-            byteWriter.AddUshort(id);
-
-            // Header.
-            byteWriter.AddBits(1, 0);
-            byteWriter.AddBits(4, 0);
-            byteWriter.AddBits(1, 0);
-            byteWriter.AddBits(1, 0);
-            byteWriter.AddBits(1, 0);
-
-            byteWriter.AddBits(1, 0);
-            byteWriter.AddBits(3, 0);
-            byteWriter.AddBits(4, 0);
-
-            byteWriter.AddUshort(1);
-            byteWriter.AddUshort(0);
-            byteWriter.AddUshort(0);
-            byteWriter.AddUshort(0);
+            byteWriter.AddBytes(header.ToBytes());
 
             // Question.
             var labels = name.Split(".");
@@ -45,6 +31,12 @@ namespace DnsBits
             byteWriter.AddUshort(1);
             
             return byteWriter.GetValue();
+        }
+
+        private static ushort GetId()
+        {
+            Random random = new Random();
+            return (ushort)random.Next(ushort.MinValue, ushort.MaxValue);
         }
 
         /// <summary>
