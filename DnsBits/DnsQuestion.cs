@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace DnsBits
+﻿namespace DnsBits
 {
     /// <summary>
     /// Dns question (direct representation).
