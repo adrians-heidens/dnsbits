@@ -66,6 +66,16 @@ namespace DnsBits
             return string.Join(".", labels);
         }
 
+        private static void PrintResourceRecord(DnsResourceRecord record)
+        {
+            Console.WriteLine($">>> NAME: { record.NAME }");
+            Console.WriteLine($">>> TYPE: { record.TYPE }");
+            Console.WriteLine($">>> CLASS: { record.CLASS }");
+            Console.WriteLine($">>> TTL: { record.TTL }");
+            Console.WriteLine($">>> RDLENGTH: { record.RDLENGTH }");
+            Console.WriteLine($">>> RDATA: { BitConverter.ToString(record.RDATA) }");
+        }
+
         /// <summary>
         /// Read bytes as DNS answer message and print it.
         /// </summary>
@@ -106,42 +116,24 @@ namespace DnsBits
             Console.WriteLine($"+++ Answer ({ header.ANCOUNT }):");
             for (int i = 0; i < header.ANCOUNT; i++)
             {
-                var name = ReadName(byteReader);
-                Console.WriteLine($">>> NAME: { name }");
-                Console.WriteLine($">>> TYPE: { byteReader.GetUshort() }");
-                Console.WriteLine($">>> CLASS: { byteReader.GetUshort() }");
-                Console.WriteLine($">>> TTL: { byteReader.GetUint() }");
-                ushort rdlen = byteReader.GetUshort();
-                Console.WriteLine($">>> RDLENGTH: { rdlen }");
-                Console.WriteLine($">>> RDATA: { BitConverter.ToString(byteReader.GetBytes(rdlen)) }");
+                var record = DnsResourceRecord.FromByteReader(byteReader);
+                PrintResourceRecord(record);
             }
 
             // Authority.
             Console.WriteLine($"+++ Authority ({ header.NSCOUNT }):");
             for (int i = 0; i < header.NSCOUNT; i++)
             {
-                var name = ReadName(byteReader);
-                Console.WriteLine($">>> NAME: { name }");
-                Console.WriteLine($">>> TYPE: { byteReader.GetUshort() }");
-                Console.WriteLine($">>> CLASS: { byteReader.GetUshort() }");
-                Console.WriteLine($">>> TTL: { byteReader.GetUint() }");
-                ushort rdlen = byteReader.GetUshort();
-                Console.WriteLine($">>> RDLENGTH: { rdlen }");
-                Console.WriteLine($">>> RDATA: { BitConverter.ToString(byteReader.GetBytes(rdlen)) }");
+                var record = DnsResourceRecord.FromByteReader(byteReader);
+                PrintResourceRecord(record);
             }
 
             // Additional.
             Console.WriteLine($"+++ Additional ({ header.ARCOUNT }):");
             for (int i = 0; i < header.ARCOUNT; i++)
             {
-                var name = ReadName(byteReader);
-                Console.WriteLine($">>> NAME: { name }");
-                Console.WriteLine($">>> TYPE: { byteReader.GetUshort() }");
-                Console.WriteLine($">>> CLASS: { byteReader.GetUshort() }");
-                Console.WriteLine($">>> TTL: { byteReader.GetUint() }");
-                ushort rdlen = byteReader.GetUshort();
-                Console.WriteLine($">>> RDLENGTH: { rdlen }");
-                Console.WriteLine($">>> RDATA: { BitConverter.ToString(byteReader.GetBytes(rdlen)) }");
+                var record = DnsResourceRecord.FromByteReader(byteReader);
+                PrintResourceRecord(record);
             }
 
             if (! byteReader.IsFinished)
