@@ -69,11 +69,16 @@ namespace DnsBits
         private static void PrintResourceRecord(DnsResourceRecord record)
         {
             Console.WriteLine($">>> NAME: { record.NAME }");
-            Console.WriteLine($">>> TYPE: { record.TYPE }");
-            Console.WriteLine($">>> CLASS: { record.CLASS }");
+
+            var rtype = (RecordType)record.TYPE;
+            Console.WriteLine($">>> TYPE: { rtype }");
+
+            Console.WriteLine($">>> CLASS: { (RecordClass) record.CLASS }");
             Console.WriteLine($">>> TTL: { record.TTL }");
             Console.WriteLine($">>> RDLENGTH: { record.RDLENGTH }");
             Console.WriteLine($">>> RDATA: { BitConverter.ToString(record.RDATA) }");
+
+            Console.WriteLine("");
         }
 
         /// <summary>
@@ -101,6 +106,7 @@ namespace DnsBits
             Console.WriteLine($">>> ANCOUNT: { header.ANCOUNT }");
             Console.WriteLine($">>> NSCOUNT: { header.NSCOUNT }");
             Console.WriteLine($">>> ARCOUNT: { header.ARCOUNT }");
+            Console.WriteLine("");
 
             // Question.
             Console.WriteLine($"+++ Question ({ header.QDCOUNT }):");
@@ -108,8 +114,9 @@ namespace DnsBits
             {
                 var question = DnsQuestion.FromByteReader(byteReader);
                 Console.WriteLine($">>> QNAME: { question.QNAME }");
-                Console.WriteLine($">>> QTYPE: { question.QTYPE }");
-                Console.WriteLine($">>> QCLASS: { question.QCLASS }");
+                Console.WriteLine($">>> QTYPE: { (RecordType) question.QTYPE }");
+                Console.WriteLine($">>> QCLASS: { (RecordClass) question.QCLASS }");
+                Console.WriteLine("");
             }
 
             // Answer.
