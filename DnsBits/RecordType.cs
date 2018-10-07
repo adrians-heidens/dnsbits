@@ -19,6 +19,7 @@
         MX = 15,
         TXT = 16,
         AAAA = 28,
+        OPT = 41,
         AXFR = 252,
         MAILB = 253,
         MAILA = 254,
