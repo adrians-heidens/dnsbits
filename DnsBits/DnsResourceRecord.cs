@@ -1,9 +1,11 @@
-﻿namespace DnsBits
+﻿using System;
+
+namespace DnsBits
 {
     /// <summary>
     /// Dns resource record (direct representation).
     /// </summary>
-    class DnsResourceRecord
+    class DnsResourceRecord : IResourceRecord
     {
         /// <summary>
         /// Domain name.
@@ -76,7 +78,11 @@
 
         public override string ToString()
         {
-            return $"DnsResourceRecord()";
+            return $"DnsResourceRecord(name={NAME}, " +
+                $"type={(RecordType)TYPE}, " +
+                $"class={(RecordClass)CLASS}, " +
+                $"TTL={TTL}, " +
+                $"RDATA={BitConverter.ToString(RDATA)})";
         }
     }
 }

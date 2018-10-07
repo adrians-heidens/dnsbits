@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text;
 
 namespace DnsBits
 {
@@ -66,19 +67,90 @@ namespace DnsBits
             return string.Join(".", labels);
         }
 
-        private static void PrintResourceRecord(DnsResourceRecord record)
+        private static string ReadIpv4(ByteReader byteReader)
         {
-            Console.WriteLine($">>> NAME: { record.NAME }");
+            var b1 = byteReader.GetByte();
+            var b2 = byteReader.GetByte();
+            var b3 = byteReader.GetByte();
+            var b4 = byteReader.GetByte();
+            return $"{b1}.{b2}.{b3}.{b4}";
+        }
 
-            var rtype = (RecordType)record.TYPE;
-            Console.WriteLine($">>> TYPE: { rtype }");
+        private static string ReadIpv6(ByteReader byteReader)
+        {
+            var list = new List<string>();
+            for (int i = 0; i < 8; i++)
+            {
+                var u = byteReader.GetUshort();
+                list.Add(u.ToString("x2"));
+            }
+            return String.Join(":", list);
+        }
 
-            Console.WriteLine($">>> CLASS: { (RecordClass) record.CLASS }");
-            Console.WriteLine($">>> TTL: { record.TTL }");
-            Console.WriteLine($">>> RDLENGTH: { record.RDLENGTH }");
-            Console.WriteLine($">>> RDATA: { BitConverter.ToString(record.RDATA) }");
+        private static void PrintResourceRecord(IResourceRecord record)
+        {
+            Console.WriteLine(record);
+        }
 
-            Console.WriteLine("");
+        private static IResourceRecord ReadRecord(ByteReader byteReader)
+        {
+            var name = DnsUtils.ReadName(byteReader);
+            var rtype = byteReader.GetUshort();
+            var rclass = byteReader.GetUshort();
+            var ttl = byteReader.GetUint();
+
+            if ((RecordType)rtype == RecordType.NS)
+            {
+                var record = new NSRecord()
+                {
+                    NAME = name,
+                    TYPE = rtype,
+                    CLASS = rclass,
+                    TTL = ttl,
+                };
+                var rdlength = byteReader.GetUshort();
+                record.HOST = ReadName(byteReader);
+                return record;
+            }
+            else if ((RecordType)rtype == RecordType.A)
+            {
+                var record = new ARecord()
+                {
+                    NAME = name,
+                    TYPE = rtype,
+                    CLASS = rclass,
+                    TTL = ttl,
+                };
+                var rdlength = byteReader.GetUshort();
+                record.IPV4 = ReadIpv4(byteReader);
+                return record;
+            }
+            else if ((RecordType)rtype == RecordType.AAAA)
+            {
+                var record = new AAAARecord()
+                {
+                    NAME = name,
+                    TYPE = rtype,
+                    CLASS = rclass,
+                    TTL = ttl,
+                };
+                var rdlength = byteReader.GetUshort();
+                record.IPV6 = ReadIpv6(byteReader);
+                return record;
+            }
+            else
+            {
+                var record = new DnsResourceRecord()
+                {
+                    NAME = name,
+                    TYPE = rtype,
+                    CLASS = rclass,
+                    TTL = ttl,
+                };
+                var rdlength = byteReader.GetUshort();
+                record.RDATA = byteReader.GetBytes(rdlength);
+                return record;
+            }
         }
 
         /// <summary>
@@ -123,7 +195,7 @@ namespace DnsBits
             Console.WriteLine($"+++ Answer ({ header.ANCOUNT }):");
             for (int i = 0; i < header.ANCOUNT; i++)
             {
-                var record = DnsResourceRecord.FromByteReader(byteReader);
+                var record = ReadRecord(byteReader);
                 PrintResourceRecord(record);
             }
 
@@ -131,7 +203,7 @@ namespace DnsBits
             Console.WriteLine($"+++ Authority ({ header.NSCOUNT }):");
             for (int i = 0; i < header.NSCOUNT; i++)
             {
-                var record = DnsResourceRecord.FromByteReader(byteReader);
+                var record = ReadRecord(byteReader);
                 PrintResourceRecord(record);
             }
 
@@ -139,7 +211,7 @@ namespace DnsBits
             Console.WriteLine($"+++ Additional ({ header.ARCOUNT }):");
             for (int i = 0; i < header.ARCOUNT; i++)
             {
-                var record = DnsResourceRecord.FromByteReader(byteReader);
+                var record = ReadRecord(byteReader);
                 PrintResourceRecord(record);
             }
 
