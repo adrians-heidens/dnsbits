@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Net;
 using System.Net.Sockets;
-using System.Text;
 
 namespace DnsBits
 {
@@ -47,7 +46,7 @@ namespace DnsBits
 
             var dnsPacket = new byte[c];
             Array.Copy(output, dnsPacket, c);
-            DnsUtils.ReadDnsAnswerMessage(dnsPacket);
+            DnsUtils.ReadAndPrintDnsMessage(dnsPacket);
 
             socket.Close();
         }

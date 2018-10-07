@@ -3,7 +3,7 @@
     /// <summary>
     /// Dns question (direct representation).
     /// </summary>
-    class DnsQuestion
+    public class DnsQuestion
     {
         public string QNAME { get; set; }
 

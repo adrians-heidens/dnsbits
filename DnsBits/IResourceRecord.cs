@@ -1,6 +1,6 @@
 ﻿namespace DnsBits
 {
-    interface IResourceRecord
+    public interface IResourceRecord
     {
     }
 }

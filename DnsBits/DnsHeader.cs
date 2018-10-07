@@ -3,7 +3,7 @@
     /// <summary>
     /// Dns message header (direct representation).
     /// </summary>
-    class DnsHeader
+    public class DnsHeader
     {
         /// <summary>
         /// A 16 bit identifier used by the requester to match up replies.

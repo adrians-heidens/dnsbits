@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace DnsBits
 {
@@ -87,11 +86,6 @@ namespace DnsBits
             return String.Join(":", list);
         }
 
-        private static void PrintResourceRecord(IResourceRecord record)
-        {
-            Console.WriteLine(record);
-        }
-
         private static IResourceRecord ReadRecord(ByteReader byteReader)
         {
             var name = DnsUtils.ReadName(byteReader);
@@ -154,71 +148,62 @@ namespace DnsBits
         }
 
         /// <summary>
-        /// Read bytes as DNS answer message and print it.
+        /// Parse byte array as a DNS message.
         /// </summary>
-        public static void ReadDnsAnswerMessage(byte[] message)
+        public static DnsMessage ReadDnsMessage(byte[] message)
         {
             var byteReader = new ByteReader(message);
-
             var header = DnsHeader.FromByteReader(byteReader);
 
-            Console.WriteLine($">>> ID: { header.ID }");
-
-            Console.WriteLine($">>> QR: { header.QR }");
-            Console.WriteLine($">>> OPCODE: { header.OPCODE }");
-            Console.WriteLine($">>> AA: { header.AA }");
-            Console.WriteLine($">>> TC: { header.TC }");
-            Console.WriteLine($">>> RD: { header.RD }");
-
-            Console.WriteLine($">>> RA: { header.RA }");
-            Console.WriteLine($">>> Z: { header.Z }");
-            Console.WriteLine($">>> RCODE: { header.RCODE }");
-
-            Console.WriteLine($">>> QDCOUNT: { header.QDCOUNT }");
-            Console.WriteLine($">>> ANCOUNT: { header.ANCOUNT }");
-            Console.WriteLine($">>> NSCOUNT: { header.NSCOUNT }");
-            Console.WriteLine($">>> ARCOUNT: { header.ARCOUNT }");
-            Console.WriteLine("");
-
-            // Question.
-            Console.WriteLine($"+++ Question ({ header.QDCOUNT }):");
+            var questions = new List<DnsQuestion>();
             for (int i = 0; i < header.QDCOUNT; i++)
             {
                 var question = DnsQuestion.FromByteReader(byteReader);
-                Console.WriteLine($">>> QNAME: { question.QNAME }");
-                Console.WriteLine($">>> QTYPE: { (RecordType) question.QTYPE }");
-                Console.WriteLine($">>> QCLASS: { (RecordClass) question.QCLASS }");
-                Console.WriteLine("");
+                questions.Add(question);
             }
 
-            // Answer.
-            Console.WriteLine($"+++ Answer ({ header.ANCOUNT }):");
+            var answer = new List<IResourceRecord>();
             for (int i = 0; i < header.ANCOUNT; i++)
             {
                 var record = ReadRecord(byteReader);
-                PrintResourceRecord(record);
+                answer.Add(record);
             }
 
-            // Authority.
-            Console.WriteLine($"+++ Authority ({ header.NSCOUNT }):");
+            var authority = new List<IResourceRecord>();
             for (int i = 0; i < header.NSCOUNT; i++)
             {
                 var record = ReadRecord(byteReader);
-                PrintResourceRecord(record);
+                authority.Add(record);
             }
 
-            // Additional.
-            Console.WriteLine($"+++ Additional ({ header.ARCOUNT }):");
+            var additional = new List<IResourceRecord>();
             for (int i = 0; i < header.ARCOUNT; i++)
             {
                 var record = ReadRecord(byteReader);
-                PrintResourceRecord(record);
+                additional.Add(record);
             }
 
-            if (! byteReader.IsFinished)
+            if (!byteReader.IsFinished)
             {
                 throw new Exception("Dns data not exhausted.");
             }
+
+            return new DnsMessage {
+                Header = header,
+                Question = questions,
+                Answer = answer,
+                Authority = authority,
+                Additional = additional,
+            };
+        }
+
+        /// <summary>
+        /// Read bytes as DNS answer message and print it.
+        /// </summary>
+        public static void ReadAndPrintDnsMessage(byte[] message)
+        {
+            var dnsMessage = ReadDnsMessage(message);
+            Console.WriteLine(dnsMessage.ToMultiString());
         }
     }
 }
