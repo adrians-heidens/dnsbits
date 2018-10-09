@@ -1,6 +1,6 @@
-﻿namespace DnsBits
+﻿namespace DnsBits.Records
 {
-    class AAAARecord : IResourceRecord
+    class NSRecord : IResourceRecord
     {
         public string NAME { get; set; }
 
@@ -10,15 +10,15 @@
 
         public uint TTL { get; set; }
 
-        public string IPV6 { get; set; }
+        public string HOST { get; set; }
 
         public override string ToString()
         {
-            return $"AAAARecord(name={NAME}, " +
+            return $"NSRecord(name={NAME}, " +
                 $"type={(RecordType)TYPE}, " +
                 $"class={(RecordClass)CLASS}, " +
                 $"TTL={TTL}, " +
-                $"IPV6={IPV6})";
+                $"HOST={HOST})";
         }
     }
 }

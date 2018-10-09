@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DnsBits.Records;
+using System;
 using System.Collections.Generic;
 
 namespace DnsBits
@@ -22,7 +23,7 @@ namespace DnsBits
             question.QTYPE = 1;
             question.QCLASS = 1;
             byteWriter.AddBytes(question.ToBytes());
-
+            
             return byteWriter.GetValue();
         }
 
@@ -121,7 +122,7 @@ namespace DnsBits
             }
             else if ((RecordType)rtype == RecordType.AAAA)
             {
-                var record = new AAAARecord()
+                var record = new AaaaRecord()
                 {
                     NAME = name,
                     TYPE = rtype,

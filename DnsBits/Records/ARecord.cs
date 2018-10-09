@@ -1,4 +1,4 @@
-﻿namespace DnsBits
+﻿namespace DnsBits.Records
 {
     class ARecord : IResourceRecord
     {
