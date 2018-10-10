@@ -87,7 +87,7 @@ namespace DnsBits
             return String.Join(":", list);
         }
 
-        private static IResourceRecord ReadRecord(ByteReader byteReader)
+        private static IRecord ReadRecord(ByteReader byteReader)
         {
             var name = DnsUtils.ReadName(byteReader);
             var rtype = byteReader.GetUshort();
@@ -98,52 +98,49 @@ namespace DnsBits
             {
                 var record = new NSRecord()
                 {
-                    NAME = name,
-                    TYPE = rtype,
-                    CLASS = rclass,
-                    TTL = ttl,
+                    Name = name,
+                    RClass = rclass,
+                    Ttl = ttl,
                 };
                 var rdlength = byteReader.GetUshort();
-                record.HOST = ReadName(byteReader);
+                record.Host = ReadName(byteReader);
                 return record;
             }
             else if ((RecordType)rtype == RecordType.A)
             {
                 var record = new ARecord()
                 {
-                    NAME = name,
-                    TYPE = rtype,
-                    CLASS = rclass,
-                    TTL = ttl,
+                    Name = name,
+                    RClass = rclass,
+                    Ttl = ttl,
                 };
                 var rdlength = byteReader.GetUshort();
-                record.IPV4 = ReadIpv4(byteReader);
+                record.IPv4 = ReadIpv4(byteReader);
                 return record;
             }
             else if ((RecordType)rtype == RecordType.AAAA)
             {
                 var record = new AaaaRecord()
                 {
-                    NAME = name,
-                    TYPE = rtype,
-                    CLASS = rclass,
-                    TTL = ttl,
+                    Name = name,
+                    RClass = rclass,
+                    Ttl = ttl,
                 };
                 var rdlength = byteReader.GetUshort();
-                record.IPV6 = ReadIpv6(byteReader);
+                record.IPv6 = ReadIpv6(byteReader);
                 return record;
             }
             else
             {
-                var record = new DnsResourceRecord()
+                var record = new Record()
                 {
-                    NAME = name,
-                    TYPE = rtype,
-                    CLASS = rclass,
-                    TTL = ttl,
+                    Name = name,
+                    RType = rtype,
+                    RClass = (ushort)rclass,
+                    Ttl = ttl,
                 };
                 var rdlength = byteReader.GetUshort();
-                record.RDATA = byteReader.GetBytes(rdlength);
+                record.RData = byteReader.GetBytes(rdlength);
                 return record;
             }
         }
@@ -163,21 +160,21 @@ namespace DnsBits
                 questions.Add(question);
             }
 
-            var answer = new List<IResourceRecord>();
+            var answer = new List<IRecord>();
             for (int i = 0; i < header.ANCOUNT; i++)
             {
                 var record = ReadRecord(byteReader);
                 answer.Add(record);
             }
 
-            var authority = new List<IResourceRecord>();
+            var authority = new List<IRecord>();
             for (int i = 0; i < header.NSCOUNT; i++)
             {
                 var record = ReadRecord(byteReader);
                 authority.Add(record);
             }
 
-            var additional = new List<IResourceRecord>();
+            var additional = new List<IRecord>();
             for (int i = 0; i < header.ARCOUNT; i++)
             {
                 var record = ReadRecord(byteReader);
@@ -196,6 +193,38 @@ namespace DnsBits
                 Authority = authority,
                 Additional = additional,
             };
+        }
+
+        /// <summary>
+        /// Conver DNS message to byte array ready for transporting.
+        /// </summary>
+        public static byte[] DnsMessageToBytes(DnsMessage message)
+        {
+            var byteWriter = new ByteWriter();
+
+            byteWriter.AddBytes(message.Header.ToBytes());
+
+            var questionCount = message.Question.Count;
+            if (questionCount == 0)
+            {
+                
+            }
+            if (questionCount == 1)
+            {
+                byteWriter.AddBytes(message.Question[0].ToBytes());
+            }
+            else
+            {
+                throw new DnsBitsException($"Unexpected number of questions: {questionCount}");
+            }
+
+            // Answers.
+
+            // Authority.
+
+            // Additional.
+            
+            return null;
         }
 
         /// <summary>

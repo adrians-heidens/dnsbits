@@ -1,24 +1,24 @@
 ﻿namespace DnsBits.Records
 {
-    class NSRecord : IResourceRecord
+    class NSRecord : IRecord
     {
-        public string NAME { get; set; }
+        public string Name { get; set; }
 
-        public ushort TYPE { get; set; }
+        public ushort RType { get; } = (ushort)RecordType.NS;
 
-        public ushort CLASS { get; set; }
+        public ushort RClass { get; set; } = (ushort)RecordClass.IN;
 
-        public uint TTL { get; set; }
+        public uint Ttl { get; set; }
 
-        public string HOST { get; set; }
+        public string Host { get; set; }
 
         public override string ToString()
         {
-            return $"NSRecord(name={NAME}, " +
-                $"type={(RecordType)TYPE}, " +
-                $"class={(RecordClass)CLASS}, " +
-                $"TTL={TTL}, " +
-                $"HOST={HOST})";
+            return $"NSRecord(Name={Name}, " +
+                $"RType={(RecordType)RType}, " +
+                $"RClass={(RecordClass)RClass}, " +
+                $"Ttl={Ttl}, " +
+                $"Host={Host})";
         }
     }
 }

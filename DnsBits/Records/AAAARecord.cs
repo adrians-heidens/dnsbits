@@ -1,24 +1,24 @@
 ﻿namespace DnsBits.Records
 {
-    class AaaaRecord : IResourceRecord
+    class AaaaRecord : IRecord
     {
-        public string NAME { get; set; }
+        public string Name { get; set; }
 
-        public ushort TYPE { get; set; }
+        public ushort RType { get; } = (ushort)RecordType.AAAA;
 
-        public ushort CLASS { get; set; }
+        public ushort RClass { get; set; } = (ushort)RecordClass.IN;
 
-        public uint TTL { get; set; }
+        public uint Ttl { get; set; }
 
-        public string IPV6 { get; set; }
+        public string IPv6 { get; set; }
 
         public override string ToString()
         {
-            return $"AaaaRecord(name={NAME}, " +
-                $"type={(RecordType)TYPE}, " +
-                $"class={(RecordClass)CLASS}, " +
-                $"TTL={TTL}, " +
-                $"IPV6={IPV6})";
+            return $"AaaaRecord(Name={Name}, " +
+                $"RType={(RecordType)RType}, " +
+                $"RClass={(RecordClass)RClass}, " +
+                $"Ttl={Ttl}, " +
+                $"IPv6={IPv6})";
         }
     }
 }

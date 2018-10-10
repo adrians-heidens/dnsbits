@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using DnsBits.Records;
+using System.Collections.Generic;
 using System.Text;
 
 namespace DnsBits
@@ -7,13 +8,13 @@ namespace DnsBits
     {
         public DnsHeader Header { get; set; }
 
-        public List<DnsQuestion> Question { get; set; }
+        public List<DnsQuestion> Question { get; set; } = new List<DnsQuestion>();
 
-        public List<IResourceRecord> Answer { get; set; }
+        public List<IRecord> Answer { get; set; } = new List<IRecord>();
 
-        public List<IResourceRecord> Authority { get; set; }
+        public List<IRecord> Authority { get; set; } = new List<IRecord>();
 
-        public List<IResourceRecord> Additional { get; set; }
+        public List<IRecord> Additional { get; set; } = new List<IRecord>();
 
         public override string ToString()
         {
