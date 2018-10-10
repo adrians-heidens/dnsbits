@@ -153,11 +153,14 @@ namespace DnsBits
             var byteReader = new ByteReader(message);
             var header = DnsHeader.FromByteReader(byteReader);
 
-            var questions = new List<DnsQuestion>();
-            for (int i = 0; i < header.QDCOUNT; i++)
+            DnsQuestion question = null;
+            if (header.QDCOUNT == 1)
             {
-                var question = DnsQuestion.FromByteReader(byteReader);
-                questions.Add(question);
+                question = DnsQuestion.FromByteReader(byteReader);
+            }
+            else if (header.QDCOUNT > 1)
+            {
+                throw new DnsBitsException($"Unexpected number of questions: {header.QDCOUNT}");
             }
 
             var answer = new List<IRecord>();
@@ -188,7 +191,7 @@ namespace DnsBits
 
             return new DnsMessage {
                 Header = header,
-                Question = questions,
+                Question = question,
                 Answer = answer,
                 Authority = authority,
                 Additional = additional,
@@ -202,29 +205,36 @@ namespace DnsBits
         {
             var byteWriter = new ByteWriter();
 
-            byteWriter.AddBytes(message.Header.ToBytes());
+            var header = message.Header;
+            byteWriter.AddBytes(header.ToBytes());
 
-            var questionCount = message.Question.Count;
-            if (questionCount == 0)
+            // TODO:
+
+            // Question.
+            if (message.Question != null)
             {
-                
-            }
-            if (questionCount == 1)
-            {
-                byteWriter.AddBytes(message.Question[0].ToBytes());
-            }
-            else
-            {
-                throw new DnsBitsException($"Unexpected number of questions: {questionCount}");
+                byteWriter.AddBytes(message.Question.ToBytes());
             }
 
             // Answers.
+            foreach (var record in message.Answer)
+            {
+                // TODO: Add bytes.
+            }
 
             // Authority.
+            foreach (var record in message.Authority)
+            {
+                // TODO: Add bytes.
+            }
 
             // Additional.
-            
-            return null;
+            foreach (var record in message.Additional)
+            {
+                // TODO: Add bytes.
+            }
+
+            return byteWriter.GetValue();
         }
 
         /// <summary>

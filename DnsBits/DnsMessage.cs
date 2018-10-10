@@ -8,7 +8,7 @@ namespace DnsBits
     {
         public DnsHeader Header { get; set; }
 
-        public List<DnsQuestion> Question { get; set; } = new List<DnsQuestion>();
+        public DnsQuestion Question { get; set; }
 
         public List<IRecord> Answer { get; set; } = new List<IRecord>();
 
@@ -48,11 +48,11 @@ namespace DnsBits
             builder.AppendLine("");
 
             builder.AppendLine($"+++ Question ({ Header.QDCOUNT }):");
-            foreach (var question in Question)
+            if (Question != null)
             {
-                builder.AppendLine($">>> QNAME: { question.QNAME }");
-                builder.AppendLine($">>> QTYPE: { (RecordType)question.QTYPE }");
-                builder.AppendLine($">>> QCLASS: { (RecordClass)question.QCLASS }");
+                builder.AppendLine($">>> QNAME: { Question.QNAME }");
+                builder.AppendLine($">>> QTYPE: { (RecordType)Question.QTYPE }");
+                builder.AppendLine($">>> QCLASS: { (RecordClass)Question.QCLASS }");
             }
 
             builder.AppendLine("");
