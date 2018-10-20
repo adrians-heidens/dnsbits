@@ -1,6 +1,7 @@
 ﻿using DnsBits.Records;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 
 namespace DnsBits
 {
@@ -199,6 +200,96 @@ namespace DnsBits
         }
 
         /// <summary>
+        /// Add ipv4 value to byte writer.
+        /// </summary>
+        private static void AddIpv4(string ipv4, ByteWriter byteWriter)
+        {
+            var parts = ipv4.Split(".");
+            if (parts.Length != 4)
+            {
+                throw new DnsBitsException($"Invalid Ipv4 value: '{ipv4}'");
+            }
+            foreach (var part in parts)
+            {
+                byteWriter.AddByte(byte.Parse(part));
+            }
+        }
+
+        /// <summary>
+        /// Add ipv6 value to byte writer.
+        /// </summary>
+        private static void AddIpv6(string ipv6, ByteWriter byteWriter)
+        {
+            var parts = ipv6.Split(":");
+            if (parts.Length != 8)
+            {
+                throw new DnsBitsException($"Invalid Ipv6 value: '{ipv6}'");
+            }
+            foreach (var part in parts)
+            {
+                ushort num = ushort.Parse(part, NumberStyles.HexNumber);
+                byteWriter.AddUshort(num);
+            }
+        }
+
+        /// <summary>
+        /// Add domain name to byteWriter without compressions.
+        /// </summary>
+        private static void AddName(string name, ByteWriter byteWriter)
+        {
+            var labels = name.Split(".");
+            foreach (var label in labels)
+            {
+                byteWriter.AddByte((byte)label.Length);
+                byteWriter.AddString(label);
+            }
+            byteWriter.AddByte(0);
+        }
+
+        private static void AddRecord(IRecord record, ByteWriter byteWriter)
+        {
+            if (record.GetType() == typeof(AaaaRecord))
+            {
+                var rec = (AaaaRecord)record;
+                AddName(rec.Name, byteWriter);
+                byteWriter.AddUshort(rec.RType);
+                byteWriter.AddUshort(rec.RClass);
+                byteWriter.AddUint(rec.Ttl);
+                AddIpv6(rec.IPv6, byteWriter);
+            }
+            else if (record.GetType() == typeof(ARecord))
+            {
+                var rec = (ARecord)record;
+                AddName(rec.Name, byteWriter);
+                byteWriter.AddUshort(rec.RType);
+                byteWriter.AddUshort(rec.RClass);
+                byteWriter.AddUint(rec.Ttl);
+                AddIpv4(rec.IPv4, byteWriter);
+            }
+            else if (record.GetType() == typeof(NSRecord))
+            {
+                var rec = (NSRecord)record;
+                AddName(rec.Name, byteWriter);
+                byteWriter.AddUshort(rec.RType);
+                byteWriter.AddUshort(rec.RClass);
+                byteWriter.AddUint(rec.Ttl);
+                AddName(rec.Host, byteWriter);
+            }
+            else if (record.GetType() == typeof(Record))
+            {
+                var rec = (Record)record;
+                AddName(rec.Name, byteWriter);
+                byteWriter.AddUshort(rec.RType);
+                byteWriter.AddUshort(rec.RClass);
+                byteWriter.AddUint(rec.Ttl);
+            }
+            else
+            {
+                throw new DnsBitsException($"Unexpected record type: {record.GetType()}");
+            }
+        }
+
+        /// <summary>
         /// Conver DNS message to byte array ready for transporting.
         /// </summary>
         public static byte[] DnsMessageToBytes(DnsMessage message)
@@ -207,8 +298,6 @@ namespace DnsBits
 
             var header = message.Header;
             byteWriter.AddBytes(header.ToBytes());
-
-            // TODO:
 
             // Question.
             if (message.Question != null)
@@ -219,19 +308,19 @@ namespace DnsBits
             // Answers.
             foreach (var record in message.Answer)
             {
-                // TODO: Add bytes.
+                AddRecord(record, byteWriter);
             }
 
             // Authority.
             foreach (var record in message.Authority)
             {
-                // TODO: Add bytes.
+                AddRecord(record, byteWriter);
             }
 
             // Additional.
             foreach (var record in message.Additional)
             {
-                // TODO: Add bytes.
+                AddRecord(record, byteWriter);
             }
 
             return byteWriter.GetValue();
