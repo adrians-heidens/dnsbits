@@ -1,6 +1,6 @@
 ﻿namespace DnsBits.Records
 {
-    class ARecord : IRecord
+    public class ARecord : IRecord
     {
         public string Name { get; set; }
 

@@ -5,7 +5,7 @@ namespace DnsBits.Records
     /// <summary>
     /// Unknown (generic) DNS resource record.
     /// </summary>
-    class Record : IRecord
+    public class Record : IRecord
     {
         /// <summary>
         /// Domain name.

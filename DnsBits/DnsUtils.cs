@@ -83,7 +83,7 @@ namespace DnsBits
             for (int i = 0; i < 8; i++)
             {
                 var u = byteReader.GetUshort();
-                list.Add(u.ToString("x2"));
+                list.Add(u.ToString("x4"));
             }
             return String.Join(":", list);
         }
