@@ -233,10 +233,11 @@ namespace DnsBits
         }
 
         /// <summary>
-        /// Add domain name to byteWriter without compressions.
+        /// Get bytes for domain name.
         /// </summary>
-        private static void AddName(string name, ByteWriter byteWriter)
+        private static byte[] GetNameBytes(string name)
         {
+            var byteWriter = new ByteWriter();
             var labels = name.Split(".");
             foreach (var label in labels)
             {
@@ -244,6 +245,7 @@ namespace DnsBits
                 byteWriter.AddString(label);
             }
             byteWriter.AddByte(0);
+            return byteWriter.GetValue();
         }
 
         private static void AddRecord(IRecord record, ByteWriter byteWriter)
@@ -251,37 +253,43 @@ namespace DnsBits
             if (record.GetType() == typeof(AaaaRecord))
             {
                 var rec = (AaaaRecord)record;
-                AddName(rec.Name, byteWriter);
+                byteWriter.AddBytes(GetNameBytes(rec.Name));
                 byteWriter.AddUshort(rec.RType);
                 byteWriter.AddUshort(rec.RClass);
                 byteWriter.AddUint(rec.Ttl);
+                byteWriter.AddUshort(16); // rdlength.
                 AddIpv6(rec.IPv6, byteWriter);
             }
             else if (record.GetType() == typeof(ARecord))
             {
                 var rec = (ARecord)record;
-                AddName(rec.Name, byteWriter);
+                byteWriter.AddBytes(GetNameBytes(rec.Name));
                 byteWriter.AddUshort(rec.RType);
                 byteWriter.AddUshort(rec.RClass);
                 byteWriter.AddUint(rec.Ttl);
+                byteWriter.AddUshort(4); // rdlength.
                 AddIpv4(rec.IPv4, byteWriter);
             }
             else if (record.GetType() == typeof(NSRecord))
             {
                 var rec = (NSRecord)record;
-                AddName(rec.Name, byteWriter);
+                byteWriter.AddBytes(GetNameBytes(rec.Name));
                 byteWriter.AddUshort(rec.RType);
                 byteWriter.AddUshort(rec.RClass);
                 byteWriter.AddUint(rec.Ttl);
-                AddName(rec.Host, byteWriter);
+                var hostBytes = GetNameBytes(rec.Host);
+                byteWriter.AddUshort((ushort)hostBytes.Length); // rdlength.
+                byteWriter.AddBytes(hostBytes);
             }
             else if (record.GetType() == typeof(Record))
             {
                 var rec = (Record)record;
-                AddName(rec.Name, byteWriter);
+                byteWriter.AddBytes(GetNameBytes(rec.Name));
                 byteWriter.AddUshort(rec.RType);
                 byteWriter.AddUshort(rec.RClass);
                 byteWriter.AddUint(rec.Ttl);
+                byteWriter.AddUshort(rec.RDLength);
+                byteWriter.AddBytes(rec.RData);
             }
             else
             {
