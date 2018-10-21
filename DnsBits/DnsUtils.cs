@@ -109,14 +109,13 @@ namespace DnsBits
             }
             else if ((RecordType)rtype == RecordType.A)
             {
-                var record = new ARecord()
+                var rdlength = byteReader.GetUshort();
+                var ipv4 = ReadIpv4(byteReader);
+                var record = new ARecord(name, ipv4)
                 {
-                    Name = name,
                     RClass = rclass,
                     Ttl = ttl,
                 };
-                var rdlength = byteReader.GetUshort();
-                record.IPv4 = ReadIpv4(byteReader);
                 return record;
             }
             else if ((RecordType)rtype == RecordType.AAAA)

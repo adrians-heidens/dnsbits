@@ -49,12 +49,10 @@ namespace Tests
                 QTYPE = 1,
                 QNAME = "f00.test",
             };
-            message.Answer.Add(new ARecord()
+            message.Answer.Add(new ARecord("f00.test", "127.0.0.2")
             {
-                Name = "f00.test",
                 RClass = 1,
                 Ttl = 10,
-                IPv4 = "127.0.0.2",
             });
             Console.WriteLine(message.ToMultiString());
 
