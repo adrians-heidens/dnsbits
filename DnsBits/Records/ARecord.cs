@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text.RegularExpressions;
 
 namespace DnsBits.Records
 {
@@ -6,7 +7,19 @@ namespace DnsBits.Records
     {
         private string ipv4 = null;
 
-        public string Name { get; set; }
+        private string name = null;
+
+        public string Name {
+            get { return name; }
+            set
+            {
+                if (!IsValidName(value))
+                {
+                    throw new ArgumentException($"Invalid name value: '{value}'");
+                }
+                name = value;
+            }
+        }
 
         public ushort RType { get; } = (ushort)RecordType.A;
 
@@ -60,6 +73,39 @@ namespace DnsBits.Records
             return true;
         }
         
+        /// <summary>
+        /// Is the string a valid domain name.
+        /// </summary>
+        private static bool IsValidName(string name)
+        {
+            if (name == null)
+            {
+                return false;
+            }
+
+            if (name.EndsWith("."))
+            {
+                name = name.TrimEnd('.');
+            }
+
+            var labelRegex = new Regex("^[a-z]([a-z0-9-]*[a-z0-9])?$");
+            int size = 0;
+            foreach (var label in name.Split("."))
+            {
+                var labelLower = label.ToLower();
+                if (labelLower.Length > 63 || !labelRegex.IsMatch(labelLower))
+                {
+                    return false;
+                }
+                size += 1 + label.Length;
+                if (size > 255)
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
         public override string ToString()
         {
             return $"ARecord(Name={Name}, " +
