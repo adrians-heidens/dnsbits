@@ -120,14 +120,13 @@ namespace DnsBits
             }
             else if ((RecordType)rtype == RecordType.AAAA)
             {
-                var record = new AaaaRecord()
+                var rdlength = byteReader.GetUshort();
+                var ipv6 = ReadIpv6(byteReader);
+                var record = new AaaaRecord(name, ipv6)
                 {
-                    Name = name,
                     RClass = rclass,
                     Ttl = ttl,
                 };
-                var rdlength = byteReader.GetUshort();
-                record.IPv6 = ReadIpv6(byteReader);
                 return record;
             }
             else
@@ -341,5 +340,6 @@ namespace DnsBits
             var dnsMessage = ReadDnsMessage(message);
             Console.WriteLine(dnsMessage.ToMultiString());
         }
+        
     }
 }

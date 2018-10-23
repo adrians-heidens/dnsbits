@@ -16,5 +16,14 @@ namespace Tests
             Assert.AreEqual("1.2.3.40", record.IPv4);
             Assert.AreEqual("F00.tESt", record.Name);
         }
+
+        [TestMethod]
+        public void TestAaaaRecord()
+        {
+            var record = new AaaaRecord(
+                "f00.Test", "2001:0Db8:85A3:0000:0000:8a2e:0370:7334");
+            Assert.AreEqual("f00.Test", record.Name);
+            Assert.AreEqual("2001:0db8:85a3:0000:0000:8a2e:0370:7334", record.IPv6);
+        }
     }
 }
