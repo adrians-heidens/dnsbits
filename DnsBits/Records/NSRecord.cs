@@ -1,8 +1,25 @@
-﻿namespace DnsBits.Records
+﻿using System;
+
+namespace DnsBits.Records
 {
     public class NSRecord : IRecord
     {
-        public string Name { get; set; }
+        private string name = null;
+
+        private string host = null;
+
+        public string Name
+        {
+            get { return name; }
+            set
+            {
+                if (!Validator.IsValidName(value))
+                {
+                    throw new ArgumentException($"Invalid name value: '{value}'");
+                }
+                name = value;
+            }
+        }
 
         public ushort RType { get; } = (ushort)RecordType.NS;
 
@@ -10,7 +27,18 @@
 
         public uint Ttl { get; set; }
 
-        public string Host { get; set; }
+        public string Host
+        {
+            get { return host; }
+            set
+            {
+                if (!Validator.IsValidName(value))
+                {
+                    throw new ArgumentException($"Invalid name value: '{value}'");
+                }
+                host = value;
+            }
+        }
 
         public override string ToString()
         {

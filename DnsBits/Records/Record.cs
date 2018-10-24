@@ -7,10 +7,28 @@ namespace DnsBits.Records
     /// </summary>
     public class Record : IRecord
     {
+        private string name = null;
+
         /// <summary>
         /// Domain name.
         /// </summary>
-        public string Name { get; set; }
+        public string Name
+        {
+            get { return name; }
+            set
+            {
+                // Special record types allow empty string.
+                if (value == "")
+                {
+                    name = value;
+                }
+                else if (!Validator.IsValidName(value))
+                {
+                    throw new ArgumentException($"Invalid name value: '{value}'");
+                }
+                name = value;
+            }
+        }
 
         /// <summary>
         /// Resource record type.
@@ -38,6 +56,9 @@ namespace DnsBits.Records
         /// <summary>
         /// Content of the resource record.
         /// </summary>
+        /// <remarks>
+        /// Should consider limiting the length.
+        /// </remarks>
         public byte[] RData { get; set; }
 
         public override string ToString()
