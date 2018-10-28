@@ -20,9 +20,9 @@ namespace DnsBits
             byteWriter.AddBytes(header.ToBytes());
 
             var question = new DnsQuestion();
-            question.QNAME = name;
-            question.QTYPE = 1;
-            question.QCLASS = 1;
+            question.Name = name;
+            question.QType = 1;
+            question.QClass = 1;
             byteWriter.AddBytes(question.ToBytes());
             
             return byteWriter.GetValue();

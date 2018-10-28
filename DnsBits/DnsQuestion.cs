@@ -1,15 +1,15 @@
 ﻿namespace DnsBits
 {
     /// <summary>
-    /// Dns question (direct representation).
+    /// Dns question.
     /// </summary>
     public class DnsQuestion
     {
-        public string QNAME { get; set; }
+        public string Name { get; set; }
 
-        public ushort QTYPE { get; set; }
+        public ushort QType { get; set; }
 
-        public ushort QCLASS { get; set; }
+        public ushort QClass { get; set; }
 
         /// <summary>
         /// Get byte representation of the question.
@@ -18,7 +18,7 @@
         {
             var byteWriter = new ByteWriter();
 
-            var labels = QNAME.Split(".");
+            var labels = Name.Split(".");
             foreach (var label in labels)
             {
                 byteWriter.AddByte((byte)label.Length);
@@ -26,8 +26,8 @@
             }
             byteWriter.AddByte(0);
 
-            byteWriter.AddUshort(QTYPE);
-            byteWriter.AddUshort(QCLASS);
+            byteWriter.AddUshort(QType);
+            byteWriter.AddUshort(QClass);
 
             return byteWriter.GetValue();
         }
@@ -48,16 +48,16 @@
         {
             var question = new DnsQuestion();
 
-            question.QNAME = DnsUtils.ReadName(byteReader);
-            question.QTYPE = byteReader.GetUshort();
-            question.QCLASS = byteReader.GetUshort();
+            question.Name = DnsUtils.ReadName(byteReader);
+            question.QType = byteReader.GetUshort();
+            question.QClass = byteReader.GetUshort();
             
             return question;
         }
 
         public override string ToString()
         {
-            return $"DnsQuestion(QNAME='{QNAME}', QTYPE='{QTYPE}', QCLASS='{QCLASS}')";
+            return $"DnsQuestion(Name='{Name}', QType='{QType}', QClass='{QClass}')";
         }
     }
 }

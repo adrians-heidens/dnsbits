@@ -45,9 +45,9 @@ namespace Tests
             };
             message.Question = new DnsQuestion()
             {
-                QCLASS = 1,
-                QTYPE = 1,
-                QNAME = "f00.test",
+                QClass = 1,
+                QType = 1,
+                Name = "f00.test",
             };
             message.Answer.Add(new ARecord("f00.test", "127.0.0.2")
             {
