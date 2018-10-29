@@ -8,24 +8,23 @@ namespace DnsBits
     public static class DnsUtils
     {
         /// <summary>
-        /// Create DNS question message for A records.
+        /// Create DNS question message for A IN records (as bytes).
         /// </summary>
-        public static byte[] CreateQuestionARec(string name)
+        public static byte[] CreateQuestionAsBytes(string name, string qtype)
         {
-            var byteWriter = new ByteWriter();
-
+            var message = new DnsMessage();
             var header = new DnsHeader();
             header.ID = GetId();
             header.QDCOUNT = 1;
-            byteWriter.AddBytes(header.ToBytes());
+            message.Header = header;
 
             var question = new DnsQuestion();
             question.Name = name;
-            question.QType = 1;
+            question.QType = (ushort)Enum.Parse<RecordType>(qtype, ignoreCase: true);
             question.QClass = 1;
-            byteWriter.AddBytes(question.ToBytes());
-            
-            return byteWriter.GetValue();
+            message.Question = question;
+
+            return DnsMessageToBytes(message);
         }
 
         private static ushort GetId()

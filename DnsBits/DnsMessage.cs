@@ -50,9 +50,7 @@ namespace DnsBits
             builder.AppendLine($"+++ Question ({ Header.QDCOUNT }):");
             if (Question != null)
             {
-                builder.AppendLine($">>> QNAME: { Question.Name }");
-                builder.AppendLine($">>> QTYPE: { (RecordType)Question.QType }");
-                builder.AppendLine($">>> QCLASS: { (RecordClass)Question.QClass }");
+                builder.AppendLine(Question.ToString());
             }
 
             builder.AppendLine("");

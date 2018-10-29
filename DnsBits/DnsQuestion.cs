@@ -57,7 +57,10 @@
 
         public override string ToString()
         {
-            return $"DnsQuestion(Name='{Name}', QType='{QType}', QClass='{QClass}')";
+            return $"DnsQuestion(" +
+                $"Name='{Name}', " +
+                $"QType='{(RecordType)QType}', " +
+                $"QClass='{(RecordClass)QClass}')";
         }
     }
 }

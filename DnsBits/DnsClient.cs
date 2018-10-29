@@ -24,7 +24,7 @@ namespace DnsBits
             throw new Exception($"Could not resolve hostname '{hostName}' to Ipv4 address");
         }
 
-        public void Query(string serverHost, int serverPort, string name)
+        public void Query(string serverHost, int serverPort, string name, string qtype)
         {
             Socket socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
 
@@ -33,7 +33,7 @@ namespace DnsBits
 
             socket.Connect(endPoint);
 
-            var input = DnsUtils.CreateQuestionARec(name);
+            var input = DnsUtils.CreateQuestionAsBytes(name, qtype);
 
             Console.WriteLine($"Sending: { input.Length }bytes data");
             socket.Send(input);
