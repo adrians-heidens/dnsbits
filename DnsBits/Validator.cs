@@ -15,7 +15,7 @@ namespace DnsBits
             {
                 return false;
             }
-            var parts = ipv6.Split(":");
+            var parts = ipv6.Split(':');
             if (parts.Length != 8)
             {
                 return false;
@@ -36,7 +36,7 @@ namespace DnsBits
         /// </summary>
         public static string NormalizeIPv6(string ipv6)
         {
-            var parts = ipv6.Split(":");
+            var parts = ipv6.Split(':');
             var partList = new List<string>();
             foreach (var part in parts)
             {
@@ -55,7 +55,7 @@ namespace DnsBits
             {
                 return false;
             }
-            var parts = ipv4.Split(".");
+            var parts = ipv4.Split('.');
             if (parts.Length != 4)
             {
                 return false;
@@ -76,7 +76,7 @@ namespace DnsBits
         /// </summary>
         public static string NormalizeIpv4(string ipv4)
         {
-            var parts = ipv4.Split(".");
+            var parts = ipv4.Split('.');
             ipv4 = $"{byte.Parse(parts[0])}.{byte.Parse(parts[1])}." +
                 $"{byte.Parse(parts[2])}.{byte.Parse(parts[3])}";
             return ipv4;
@@ -99,7 +99,7 @@ namespace DnsBits
 
             var labelRegex = new Regex("^[a-z]([a-z0-9-]*[a-z0-9])?$");
             int size = 0;
-            foreach (var label in name.Split("."))
+            foreach (var label in name.Split('.'))
             {
                 var labelLower = label.ToLower();
                 if (labelLower.Length > 63 || !labelRegex.IsMatch(labelLower))

@@ -18,7 +18,7 @@
         {
             var byteWriter = new ByteWriter();
 
-            var labels = Name.Split(".");
+            var labels = Name.Split('.');
             foreach (var label in labels)
             {
                 byteWriter.AddByte((byte)label.Length);

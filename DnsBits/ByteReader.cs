@@ -49,7 +49,7 @@ namespace DnsBits
             }
 
             var bytes = new byte[2];
-            var byteCount = memoryStream.Read(bytes);
+            var byteCount = memoryStream.Read(bytes, 0, bytes.Length);
             if (byteCount != 2)
             {
                 throw new DnsBitsException("End of stream.");
@@ -59,7 +59,7 @@ namespace DnsBits
             {
                 Array.Reverse(bytes);
             }
-            return BitConverter.ToUInt16(bytes);
+            return BitConverter.ToUInt16(bytes, 0);
         }
 
         /// <summary>
@@ -73,7 +73,7 @@ namespace DnsBits
             }
 
             var bytes = new byte[4];
-            var byteCount = memoryStream.Read(bytes);
+            var byteCount = memoryStream.Read(bytes, 0, bytes.Length);
             if (byteCount != 4)
             {
                 throw new DnsBitsException("End of stream.");
@@ -83,7 +83,7 @@ namespace DnsBits
             {
                 Array.Reverse(bytes);
             }
-            return BitConverter.ToUInt32(bytes);
+            return BitConverter.ToUInt32(bytes, 0);
         }
 
         /// <summary>
@@ -116,7 +116,7 @@ namespace DnsBits
             }
 
             var bytes = new byte[size];
-            var byteCount = memoryStream.Read(bytes);
+            var byteCount = memoryStream.Read(bytes, 0, bytes.Length);
             if (byteCount != size)
             {
                 throw new DnsBitsException("End of stream.");
@@ -137,7 +137,7 @@ namespace DnsBits
             }
 
             var bytes = new byte[count];
-            var byteCount = memoryStream.Read(bytes);
+            var byteCount = memoryStream.Read(bytes, 0, bytes.Length);
             if (byteCount != count)
             {
                 throw new DnsBitsException("End of stream.");

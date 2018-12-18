@@ -38,7 +38,7 @@ namespace DnsBits
             {
                 Array.Reverse(bytes);
             }
-            memoryStream.Write(bytes);
+            memoryStream.Write(bytes, 0, bytes.Length);
         }
 
         /// <summary>
@@ -56,7 +56,7 @@ namespace DnsBits
             {
                 Array.Reverse(bytes);
             }
-            memoryStream.Write(bytes);
+            memoryStream.Write(bytes, 0, bytes.Length);
         }
 
         /// <summary>
@@ -82,7 +82,8 @@ namespace DnsBits
                 throw new DnsBitsException("Writing accross byte boundaries.");
             }
 
-            memoryStream.Write(Encoding.UTF8.GetBytes(value));
+            var b = Encoding.UTF8.GetBytes(value);
+            memoryStream.Write(b, 0, b.Length);
         }
 
         /// <summary>
@@ -96,7 +97,7 @@ namespace DnsBits
                 throw new DnsBitsException("Writing accross byte boundaries.");
             }
 
-            memoryStream.Write(value);
+            memoryStream.Write(value, 0, value.Length);
         }
 
         /// <summary>

@@ -20,7 +20,7 @@ namespace DnsBits
 
             var question = new DnsQuestion();
             question.Name = name;
-            question.QType = (ushort)Enum.Parse<RecordType>(qtype, ignoreCase: true);
+            question.QType = (ushort)Enum.Parse(typeof(RecordType), qtype, ignoreCase: true);
             question.QClass = 1;
             message.Question = question;
 
@@ -201,7 +201,7 @@ namespace DnsBits
         /// </summary>
         private static void AddIpv4(string ipv4, ByteWriter byteWriter)
         {
-            var parts = ipv4.Split(".");
+            var parts = ipv4.Split('.');
             if (parts.Length != 4)
             {
                 throw new DnsBitsException($"Invalid Ipv4 value: '{ipv4}'");
@@ -217,7 +217,7 @@ namespace DnsBits
         /// </summary>
         private static void AddIpv6(string ipv6, ByteWriter byteWriter)
         {
-            var parts = ipv6.Split(":");
+            var parts = ipv6.Split(':');
             if (parts.Length != 8)
             {
                 throw new DnsBitsException($"Invalid Ipv6 value: '{ipv6}'");
@@ -235,7 +235,7 @@ namespace DnsBits
         private static byte[] GetNameBytes(string name)
         {
             var byteWriter = new ByteWriter();
-            var labels = name.Split(".");
+            var labels = name.Split('.');
             foreach (var label in labels)
             {
                 byteWriter.AddByte((byte)label.Length);
